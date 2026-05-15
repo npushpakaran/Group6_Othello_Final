@@ -15,6 +15,16 @@ The GUI is built with **Tkinter**, which is bundled with Python — no extra GUI
 
 ## How to Run
 
+## Option 1 — Recommended: Using a Virtual Environment
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 main.py play
+```
+
+## Option 2 — Run Without a Virtual Environment
+
 ### 1. Install dependencies
 ```
 pip install -r requirements.txt
