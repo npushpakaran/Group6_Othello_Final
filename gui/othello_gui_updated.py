@@ -321,10 +321,14 @@ class OthelloApp:
         self.thinking = False
         move, nodes, elapsed = result[0]
 
-        if move and not self.game.is_game_over():
-            self.game.apply_move(*move)
-            self.last_move = move
-            self._log(name, nodes, elapsed, move)
+        if not self.game.is_game_over():
+            if move:
+                self.game.apply_move(*move)
+                self.last_move = move
+                self._log(name, nodes, elapsed, move)
+            else:
+                # AI has no legal moves — forced pass
+                self.game._next_turn()
 
         self._draw_board()
 
@@ -338,7 +342,12 @@ class OthelloApp:
             self._set_status(f"{n}'s turn  ·  AI is thinking...")
             self.root.after(350, self._ai_turn)
         elif self.mode == "human_vs_ai":
-            self._set_status("Black's turn  ·  click a green dot to place your disc")
+            if p == BLACK:
+                self._set_status("Black's turn  ·  click a green dot to place your disc")
+            else:
+                # Human has no moves — pass automatically
+                self._set_status("Black has no legal moves  ·  AI continues...")
+                self.root.after(600, self._ai_turn)
 
     # ── Game over ─────────────────────────────────────────────
     def _finish(self):
