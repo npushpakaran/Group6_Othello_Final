@@ -8,7 +8,8 @@
 ## What This Is
 
 A fully playable Othello AI built using classical adversarial search.  
-The AI uses **Minimax + Alpha-Beta Pruning + a 5-factor phase-aware heuristic** to play strategically in real time.
+The AI uses **Minimax + Alpha-Beta Pruning + a 5-factor phase-aware heuristic** to play strategically in real time.  
+The GUI is built with **Tkinter**, which is bundled with Python — no extra GUI install needed.
 
 ---
 
@@ -16,10 +17,11 @@ The AI uses **Minimax + Alpha-Beta Pruning + a 5-factor phase-aware heuristic** 
 
 ### 1. Install dependencies
 ```
-python -m pip install pygame numpy matplotlib pandas
+pip install -r requirements.txt
 ```
+Only `numpy` and `matplotlib` are required. Tkinter is built into Python (no install needed).
 
-### 2. Play the game (Pygame window)
+### 2. Play the game (GUI window)
 ```
 python main.py play
 ```
@@ -30,18 +32,20 @@ Select Human vs AI, AI vs AI, or Human vs Human from the menu.
 python main.py ai
 ```
 
-### 4. Run all experiments (generates graphs)
+### 4. Run all experiments (regenerates graphs in results/)
 ```
 python main.py experiments
 ```
+This takes roughly 10–20 minutes and saves 5 PNG graphs to the `results/` folder.  
+Pre-generated results are already included in `results/` for reference.
 
 ---
 
 ## Project Structure
 
 ```
-othello_final/
-├── main.py                    ← Entry point
+Othello_v1/
+├── main.py                    ← Entry point (play / ai / experiments)
 ├── requirements.txt           ← pip install -r requirements.txt
 ├── game/
 │   └── othello_game.py        ← Board, legal moves, disc flipping, game rules
@@ -49,9 +53,10 @@ othello_final/
 │   ├── heuristics.py          ← All 5 heuristic factors + phase-aware weights
 │   └── ai_agent.py            ← Minimax + Alpha-Beta + node counter + timer
 ├── gui/
-│   └── othello_gui.py         ← Pygame GUI — click to play
-└── experiments/
-    └── experiments.py         ← All 5 heuristic comparison experiments
+│   └── othello_gui.py         ← Tkinter GUI — click to play
+├── experiments/
+│   └── experiments.py         ← All 5 heuristic comparison experiments
+└── results/                   ← Pre-generated experiment graphs (PNG)
 ```
 
 ---
@@ -59,7 +64,7 @@ othello_final/
 ## The 5 Heuristic Factors
 
 | Factor | What it measures |
-|--------|-----------------|
+|--------|------------------|
 | Coin Parity | Disc count difference |
 | Mobility | Legal moves available |
 | Corner Control | Corners captured (never flippable) |
@@ -73,9 +78,16 @@ othello_final/
 
 ---
 
+## Notes
+
+- **Iterative deepening** was considered but not implemented; fixed-depth search with move ordering achieves comparable pruning efficiency in practice.
+- The experiments module includes a **pure Minimax** function (no pruning) for a fair side-by-side node count comparison with Alpha-Beta.
+
+---
+
 ## References
 
 - Knuth & Moore (1975) — Alpha-Beta Pruning theory  
 - Rosenbloom (1982) — IAGO world-championship heuristics  
 - Sannidhanam & Annamalai — An Analysis of Heuristics in Othello  
-- Roodaki — Minimax-Powered-Othello-Game (GitHub) — game engine base
+- Roodaki — Minimax-Powered-Othello-Game (GitHub) — game engine reference

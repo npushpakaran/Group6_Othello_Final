@@ -90,12 +90,11 @@ def experiment_node_count(depths=[3, 4, 5, 6], trials=5):
                 if moves and not game.is_game_over():
                     game.apply_move(*random.choice(moves))
 
-            # Minimax (no pruning — simulate by setting alpha/beta to fixed values)
+            # Pure Minimax (no pruning)
             ai_mm = OthelloAI(game.current_player, depth=depth, heuristic="multi")
-            # For pure minimax comparison, use very wide alpha-beta (effectively no pruning)
             ai_mm.reset_counters()
             t0 = time.time()
-            ai_mm._alphabeta(game.board, depth, -99999, 99999, True, game.current_player)
+            ai_mm._minimax(game.board, depth, True, game.current_player)
             m_time  += time.time() - t0
             m_total += ai_mm.nodes_explored
 

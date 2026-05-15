@@ -84,9 +84,8 @@ class OthelloAI:
     def _order_moves(self, moves, board, player):
         """
         Sort moves best-first using a shallow evaluation.
-        Critical for maximising Alpha-Beta pruning efficiency.
-        Without ordering: ~30% reduction.
-        With ordering:    ~50% reduction.
+        Without ordering we get roughly 30% node reduction;
+        with ordering it jumps to around 50%.
         """
         scored = []
         for r, c in moves:
@@ -95,6 +94,41 @@ class OthelloAI:
             scored.append((score, (r, c)))
         scored.sort(reverse=True)
         return [move for _, move in scored]
+
+    def _minimax(self, board, depth, is_maximizing, player):
+        """
+        Pure Minimax without Alpha-Beta pruning.
+        Used only for performance comparison experiments.
+        Time complexity: O(b^d) — no pruning applied.
+        """
+        self.nodes_explored += 1
+
+        if depth == 0:
+            return self._evaluate(board, player)
+
+        current_player = player if is_maximizing else -player
+        moves = get_legal_moves_for(board, current_player)
+
+        if not moves:
+            opponent_moves = get_legal_moves_for(board, -current_player)
+            if not opponent_moves:
+                return self._evaluate(board, player)
+            return self._minimax(board, depth - 1, not is_maximizing, player)
+
+        if is_maximizing:
+            best = float('-inf')
+            for r, c in moves:
+                new_board = make_move_on_board(board, r, c, current_player)
+                score = self._minimax(new_board, depth - 1, False, player)
+                best = max(best, score)
+            return best
+        else:
+            best = float('inf')
+            for r, c in moves:
+                new_board = make_move_on_board(board, r, c, current_player)
+                score = self._minimax(new_board, depth - 1, True, player)
+                best = min(best, score)
+            return best
 
     # ── Minimax with Alpha-Beta Pruning ───────────────────────
     def _alphabeta(self, board, depth, alpha, beta, is_maximizing, player):
@@ -115,9 +149,8 @@ class OthelloAI:
         Returns:
             float: Best evaluation score for this subtree
         """
-        self.nodes_explored += 1  # ← Node counter for complexity measurement
+        self.nodes_explored += 1  # track nodes for complexity measurement
 
-        # ── Terminal conditions ───────────────────────────────
         if depth == 0:
             return self._evaluate(board, player)
 
@@ -125,15 +158,11 @@ class OthelloAI:
         moves = get_legal_moves_for(board, current_player)
 
         if not moves:
-            # No legal moves — forced pass
             opponent_moves = get_legal_moves_for(board, -current_player)
             if not opponent_moves:
-                # Game over — evaluate final position
                 return self._evaluate(board, player)
-            # Pass turn
             return self._alphabeta(board, depth - 1, alpha, beta, not is_maximizing, player)
 
-        # Order moves for better pruning
         moves = self._order_moves(moves, board, current_player)
 
         if is_maximizing:
@@ -144,7 +173,7 @@ class OthelloAI:
                 best = max(best, score)
                 alpha = max(alpha, best)
                 if beta <= alpha:
-                    break  # ← Prune — beta cut-off
+                    break  # beta cut-off
             return best
         else:
             best = float('inf')
@@ -154,7 +183,7 @@ class OthelloAI:
                 best = min(best, score)
                 beta = min(beta, best)
                 if beta <= alpha:
-                    break  # ← Prune — alpha cut-off
+                    break  # alpha cut-off
             return best
 
     def get_best_move(self, board):

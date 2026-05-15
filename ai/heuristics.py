@@ -137,33 +137,6 @@ def mobility(board, player):
     return 100 * (p_moves - o_moves) / total
 
 
-def potential_mobility(board, player):
-    """
-    Potential mobility: empty squares adjacent to opponent discs.
-    Forward-looking measure of future move availability.
-    """
-    opponent = -player
-    p_potential = set()
-    o_potential = set()
-    for r in range(8):
-        for c in range(8):
-            if board[r][c] == opponent:
-                for dr, dc in DIRECTIONS:
-                    nr, nc = r + dr, c + dc
-                    if 0 <= nr < 8 and 0 <= nc < 8 and board[nr][nc] == EMPTY:
-                        p_potential.add((nr, nc))
-            elif board[r][c] == player:
-                for dr, dc in DIRECTIONS:
-                    nr, nc = r + dr, c + dc
-                    if 0 <= nr < 8 and 0 <= nc < 8 and board[nr][nc] == EMPTY:
-                        o_potential.add((nr, nc))
-    p = len(p_potential)
-    o = len(o_potential)
-    if p + o == 0:
-        return 0
-    return 100 * (p - o) / (p + o)
-
-
 def corner_control(board, player):
     """
     Corners captured. Corners can never be flipped — permanent anchors.
@@ -176,23 +149,6 @@ def corner_control(board, player):
     if total == 0:
         return 0
     return 100 * (p_corners - o_corners) / total
-
-
-def corner_closeness(board, player):
-    """
-    Penalty for occupying X-squares and C-squares when corners are empty.
-    Playing into X-squares hands corners to the opponent.
-    """
-    opponent = -player
-    p_penalty = 0
-    o_penalty = 0
-    for (cr, cc), (xr, xc) in zip(CORNERS, X_SQUARES):
-        if board[cr][cc] == EMPTY:
-            if board[xr][xc] == player:
-                p_penalty += 1
-            elif board[xr][xc] == opponent:
-                o_penalty += 1
-    return -12.5 * (p_penalty - o_penalty)
 
 
 def positional_weight(board, player):

@@ -4,11 +4,11 @@ main.py
 Entry point for Othello AI.
 
 Run modes:
-  python main.py play          -- Opens game window (Tkinter GUI - no install needed)
+  python main.py play          -- Opens game window (Tkinter GUI, built into Python)
   python main.py ai            -- AI vs AI in terminal
   python main.py experiments   -- Run all heuristic experiments
 
-Requirements: pip install numpy matplotlib pandas
+Requirements: pip install numpy matplotlib
 GUI uses Tkinter which is built into Python - no extra install needed.
 
 Team Othello - ICSI435/535 Artificial Intelligence
